@@ -1,0 +1,33 @@
+<app-header></app-header>
+
+<div id="chat-wrapper" [hidden]="fbService.user == null">
+    <div class="chat-window">
+        <div id="groups">
+            <input type="text" [(ngModel)]="groupName" placeholder="Enter group name">
+            <button (click)="addGroup()">+</button>
+
+            <h4>
+                My Groups
+            </h4>
+            <div *ngFor="let group of fbService.groups">
+                {{group.name}}
+            </div>
+            <h4>
+                Invited Groups
+            </h4>
+        </div>
+        <div id="chat">
+            <div class="messages">
+                <div class="message me">Me</div>
+                <div class="message you">You</div>
+            </div>
+            <input type="text">
+        </div>
+        <div id="members">
+            <ul>
+                <li>member 1</li>
+                <li>member 2</li>
+            </ul>
+        </div>
+    </div>
+</div>

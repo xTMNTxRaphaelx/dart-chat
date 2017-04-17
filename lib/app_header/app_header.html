@@ -1,0 +1,15 @@
+<header>
+    <a href="javascript:void(0);">Dart Chat</a>
+
+
+    <div id="sign-in" *ngIf="fbService.user == null">
+        <button class="loginBtn loginBtn--google" (click)="fbService.signIn()">
+            Login with Google
+        </button>
+    </div>
+    <div id="sign-out" *ngIf="fbService.user != null">
+        <img class="icon" [src]="fbService.user?.photoURL">
+        <div id="user-name">{{fbService.user?.displayName}}</div>
+        <button class="signOutBtn" (click)="fbService.signOut()">Sign Out</button>
+    </div>
+</header>
