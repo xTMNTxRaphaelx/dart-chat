@@ -1,7 +1,7 @@
 class Group {
-  final String name;
+  String name;
   final String leader;
-  final List members;
+  List members;
 
   Group(this.name, [this.leader, this.members]) {}
 

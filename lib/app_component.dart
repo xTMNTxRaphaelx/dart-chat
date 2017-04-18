@@ -62,6 +62,17 @@ class AppComponent {
     }
   }
 
+  void removeMember(memberName) {
+    fbService.removeMember(memberName, activeRoom);
+    List tempList= [];
+    activeMembers.asMap().forEach((i, value) {
+      if(value != memberName) {
+        tempList.add(value);
+      }
+    });
+    activeMembers = tempList;
+  }
+
   isYou(email) {
     if(fbService.user.displayName != email) {
       return true;

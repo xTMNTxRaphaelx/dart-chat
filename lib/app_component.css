@@ -243,3 +243,14 @@
 #members .member:first-child {
     margin-top: 10px;
 }
+
+#members .king-of {
+    width: 18px;
+}
+
+#members .remove-memberBtn {
+    font-size: 24px;
+    margin-left: 6px;
+    color: #F44336;
+    text-decoration: none;
+}

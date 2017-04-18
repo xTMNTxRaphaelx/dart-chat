@@ -45,8 +45,10 @@
             <input type="text" [(ngModel)]="newMember" (keyup.enter)="addMember()" placeholder="Enter member name">
             <button class="addMemberBtn" (click)="addMember()">ADD</button>
             <div *ngIf= "activeMembers?.length > 0">
-                <div class="member" *ngFor="let member of activeMembers">
+                <div class="member" *ngFor="let member of activeMembers; let i = index" [attr.data-index]="i">
+                    <span *ngIf="i==0"><img class="king-of" src="http://cdn.onlinewebfonts.com/svg/img_242232.svg"></span>
                     {{member}}
+                    <span *ngIf="activeMembers[0] == fbService.user?.displayName && member != activeMembers[0]"><a class="remove-memberBtn" (click)="removeMember(member)">-</a></span>
                 </div>
             </div>
         </div>

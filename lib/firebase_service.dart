@@ -64,7 +64,11 @@ class FirebaseService {
         invitedGroups.forEach((group) {
           if(group.name == updatedGroup.name) {
             wasInvitedGroup= true;
-            group.members.add(updatedGroup.members[updatedGroup.members.length-1]);
+            if(updatedGroup.members.indexOf(user.displayName) == -1 && group.members.indexOf(user.displayName) != -1) {
+              group.name = "";
+            } else {
+              group.members.add(updatedGroup.members[updatedGroup.members.length-1]);
+            }
           }
         });
         if(!wasInvitedGroup && !wasMyGroup) {
@@ -149,6 +153,23 @@ class FirebaseService {
         List membersList= snapshot[key]['members'];
         membersList.add(memberName);
         _fbRefRooms.child(key).update({"members": membersList});
+      });
+    });
+  }
+
+  removeMember(String memberName, String roomName) {
+    _fbRefRooms.orderByChild('name').equalTo(roomName).once("value").then((e) {
+      e.snapshot.forEach((data) {
+        var snapshot= e.snapshot.val();
+        var key= data.key;
+        List membersList= snapshot[key]['members'];
+        List tempList= [];
+        membersList.asMap().forEach((i, value) {
+          if(value != memberName) {
+            tempList.add(value);
+          }
+        });
+        _fbRefRooms.child(key).update({"members": tempList});
       });
     });
   }
