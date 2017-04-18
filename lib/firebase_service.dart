@@ -5,18 +5,25 @@ import 'package:angular2/core.dart';
 import 'package:firebase/firebase.dart' as fb;
 
 import './groups.dart';
+import './messages.dart';
 
 @Injectable()
 class FirebaseService {
+
   fb.User user;
+
   fb.Auth _fbAuth;
   fb.GoogleAuthProvider _fbGoogleAuthProvider;
+
   fb.Database _fbDatabase;
   fb.Storage _fbStorage;
   fb.DatabaseReference _fbRefRooms;
   fb.DatabaseReference _fbRefMessages;
 
-  List<Group> groups;
+  List<Group> myGroups;
+  List<Group> invitedGroups;
+  List<Message> messages;
+  List<Message> roomMessages;
 
   FirebaseService() {
     fb.initializeApp(
@@ -26,27 +33,47 @@ class FirebaseService {
         storageBucket: "chat-work-2.appspot.com"
     );
 
+    _fbDatabase= fb.database();
+    _fbRefRooms = _fbDatabase.ref('rooms');
+    _fbRefMessages = _fbDatabase.ref('messages');
+
+    void listGroups() {
+      myGroups = [];
+      invitedGroups= [];
+      _fbRefRooms.onChildAdded.listen((e) {
+        Group group = new Group.fromMap(e.snapshot.val());
+        group.key = e.snapshot.key;
+        if(group.members.indexOf(user.displayName) != -1) {
+          if(group.leader == user.displayName) {
+            myGroups.add(group);
+          } else {
+            invitedGroups.add(group);
+          }
+        }
+
+      });
+    }
+
+    void loadMessages() {
+      messages = [];
+      _fbRefMessages.onChildAdded.listen((e) {
+        Message msg = new Message.fromMap(e.snapshot.val());
+        messages.add(msg);
+        updateRoomMessages(msg.roomName);
+      });
+    }
+
     void _authChanged(fb.AuthEvent event) {
       user = event.user;
+      if(user != null) {
+        listGroups();
+        loadMessages();
+      }
     }
 
     _fbGoogleAuthProvider= new fb.GoogleAuthProvider();
     _fbAuth = fb.auth();
     _fbAuth.onAuthStateChanged.listen(_authChanged);
-
-    _fbDatabase= fb.database();
-    _fbRefRooms = _fbDatabase.ref('rooms');
-
-    void _newGroup(fb.QueryEvent event) {
-      print(event.snapshot.val());
-      Group group = new Group.fromMap(event.snapshot.val());
-      groups.add(group);
-    }
-
-    if(user != null) {
-      groups= [];
-      _fbRefRooms.limitToLast(12).onChildAdded.listen(_newGroup);
-    }
   }
 
   Future signIn() async {
@@ -70,5 +97,28 @@ class FirebaseService {
     catch (err) {
       print ("$runtimeType:: addGroup() -- $err");
     }
+  }
+
+  void updateRoomMessages(String roomname) {
+    roomMessages= [];
+    messages.forEach((message) {
+      if(message.roomName == roomname) {
+        roomMessages.add(message);
+      }
+    });
+  }
+
+  Future sendMessage({String text, String roomName, String imageURL}) async {
+    try {
+      Message msg= new Message(user.displayName, roomName, text, user.photoURL, imageURL);
+      await _fbRefMessages.push(msg.toMap());
+    }
+    catch (err) {
+      print ("$runtimeType:: sendMessage() -- $err");
+    }
+  }
+
+  void addMember(String memberName, String roomName) async {
+//    _fbRefRooms.child()
   }
 }

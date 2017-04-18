@@ -9,25 +9,40 @@
             <h4>
                 My Groups
             </h4>
-            <div *ngFor="let group of fbService.groups">
-                {{group.name}}
+            <div *ngFor="let group of fbService.myGroups">
+                <a (click)="loadMessages(group)">{{group.key}}</a>
             </div>
             <h4>
                 Invited Groups
             </h4>
+            <div *ngFor="let group of fbService.invitedGroups">
+                <a (click)="loadMessages(group)">{{group.name}}</a>
+            </div>
         </div>
         <div id="chat">
             <div class="messages">
-                <div class="message me">Me</div>
-                <div class="message you">You</div>
+                <div *ngFor="let msg of fbService.roomMessages">
+                    <div class="name">{{msg.name}}</div>
+                    <div *ngIf="msg.imageURL == null">{{msg.text}}</div>
+                    <div *ngIf="msg.imageURL != null">
+                        <a [href]="msg.imageURL" target="_blank">
+                            <img [src]="msg.imageURL" class="message-image">
+                        </a>
+                    </div>
+                </div>
             </div>
-            <input type="text">
+            <input type="text" [(ngModel)]="chatMessage" placeholder="enter to start chatting" (keyup.enter)="sendMessage()">
+            <button (click)="sendMessage()">Send</button>
         </div>
         <div id="members">
-            <ul>
-                <li>member 1</li>
-                <li>member 2</li>
-            </ul>
+            <input type="text" [(ngModel)]="newMember" placeholder="Enter member name">
+            <button (click)="addMember()">+</button>
+            <div *ngIf="activeMembers?.length > 0">
+
+                <div *ngFor="let member of activeMembers">
+                    {{member}}
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -17,8 +17,18 @@ import 'firebase_service.dart';
 class AppComponent {
   final FirebaseService fbService;
   String groupName = "";
+  String chatMessage = "";
+  String newMember = "";
+  List chatRoomMessage = [];
+  var activeRoom= "";
+  List activeMembers = [];
+
+  List myGroups = [];
+  List invitedGroups = [];
+
 
   AppComponent(FirebaseService this.fbService) {}
+
 
   void addGroup() {
     String name = groupName.trim();
@@ -26,6 +36,27 @@ class AppComponent {
     if(name.isNotEmpty) {
       fbService.addGroup(name);
       groupName = "";
+    }
+  }
+
+  void loadMessages(room) {
+    activeRoom= room.name;
+    activeMembers= room.members;
+    print(room.key);
+    print(activeMembers);
+    fbService.updateRoomMessages(activeRoom);
+  }
+
+  void sendMessage() {
+    if(chatMessage.isNotEmpty) {
+      fbService.sendMessage(text: chatMessage, roomName: activeRoom);
+      chatMessage = "";
+    }
+  }
+
+  void addMember() {
+    if(newMember.isNotEmpty) {
+      fbService.addMember(newMember, activeRoom);
     }
   }
 }
