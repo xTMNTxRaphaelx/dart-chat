@@ -1,6 +1,7 @@
 // Copyright (c) 2017, f1sh. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import "dart:html";
 import 'package:angular2/core.dart';
 import 'package:angular2_components/angular2_components.dart';
 
@@ -86,6 +87,12 @@ class AppComponent {
       return true;
     } else {
       return false;
+    }
+  }
+
+  void sendImageMessage(FileList files) {
+    if(files.isNotEmpty) {
+      fbService.sendImage(files.first, activeRoom);
     }
   }
 }

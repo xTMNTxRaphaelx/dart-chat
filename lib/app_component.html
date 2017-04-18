@@ -29,6 +29,7 @@
                     </div>
                     <p class="desc">
                         {{msg.text}}
+                        <!--<img [src]="msg.imageURL?" class="message-image">-->
                         <!--<div *ngIf="msg.imageURL == null">{{msg.text}}</div>-->
                         <!--<div *ngIf="msg.imageURL != null">-->
                             <!--<a [href]="msg.imageURL" target="_blank">-->
@@ -39,6 +40,8 @@
                 </div>
             </div>
             <input type="text" [(ngModel)]="chatMessage" placeholder="enter to start chatting" (keyup.enter)="sendMessage()">
+            <input #mediaCapture type="file" accept="image/*,capture=camera" (change)="sendImageMessage(mediaCapture.files)">
+            <button class="imageBtn" (click)="mediaCapture.click()">Image</button>
             <button class="sendBtn" (click)="sendMessage()">Send</button>
         </div>
         <div id="members" *ngIf="isRoomActive">

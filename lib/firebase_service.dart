@@ -37,6 +37,8 @@ class FirebaseService {
     _fbRefRooms = _fbDatabase.ref('rooms');
     _fbRefMessages = _fbDatabase.ref('messages');
 
+    _fbStorage = fb.storage();
+
     void listGroups() {
       myGroups = [];
       invitedGroups= [];
@@ -172,5 +174,34 @@ class FirebaseService {
         _fbRefRooms.child(key).update({"members": tempList});
       });
     });
+  }
+
+  Future sendImage(File file, String roomName) async {
+    fb.StorageReference fbRefImage = _fbStorage.ref("${user.uid}/${new DateTime.now()}/${file.name}");
+
+    fb.UploadTask task = fbRefImage.put(file, new fb.UploadMetadata(contentType: file.type));
+
+
+    StreamSubscription sub;
+
+    sub= task.onStateChanged.listen((fb.UploadTaskSnapshot snapshot) {
+      print("uploading image -- transfered ${snapshot.bytesTransferred}/${snapshot.totalBytes}...");
+      if(snapshot.bytesTransferred == snapshot.totalBytes) {
+        sub.cancel();
+      }
+    }, onError: (fb.FirebaseError error) {
+        print(error.message);
+    });
+
+    try {
+      fb.UploadTaskSnapshot snapshot = await task.future;
+
+      if(snapshot.state == fb.TaskState.SUCCESS) {
+        sendMessage(text: '', imageURL: snapshot.downloadURL.toString(), roomName: roomName);
+      }
+    }
+    catch (err) {
+      print(err);
+    }
   }
 }
