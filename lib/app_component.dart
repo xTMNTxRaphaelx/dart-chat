@@ -34,7 +34,7 @@ class AppComponent {
 
   void addGroup() {
     String name = groupName.trim();
-    print(name);
+//    print(name);
     if(name.isNotEmpty) {
       fbService.addGroup(name);
       groupName = "";

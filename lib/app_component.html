@@ -15,7 +15,7 @@
             <h4>
                 Invited Groups
             </h4>
-            <div *ngFor="let group of fbService.invitedGroups">
+            <div class="group" *ngFor="let group of fbService.invitedGroups">
                 <a (click)="loadMessages(group)" [class.selected]="activeRoom == group.name">{{group.name}}</a>
             </div>
         </div>
@@ -43,8 +43,8 @@
         </div>
         <div id="members" *ngIf="isRoomActive">
             <input type="text" [(ngModel)]="newMember" placeholder="Enter member name">
-            <button class="addMemberBtn" (click)="addMember()">+</button>
-            <div *ngIf="activeMembers?.length > 0">
+            <button class="addMemberBtn" (click)="addMember()">ADD</button>
+            <div *ngIf= "activeMembers?.length > 0">
                 <div class="member" *ngFor="let member of activeMembers">
                     {{member}}
                 </div>

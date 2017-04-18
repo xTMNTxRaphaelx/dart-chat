@@ -117,7 +117,19 @@ class FirebaseService {
     }
   }
 
-  Future addMember(String memberName, String roomName) async {
-//    _fbRefRooms.child()
+  addMember(String memberName, String roomName) {
+    _fbRefRooms.orderByChild('name').equalTo(roomName).once("value").then((e) {
+      e.snapshot.forEach((data) {
+        var snapshot= e.snapshot.val();
+        var key= data.key;
+        print(snapshot[key]);
+        var membersList= snapshot[key]['members'];
+        print(membersList);
+        var newMembersList = membersList.add(memberName);
+        print(newMembersList);
+        _fbRefRooms.child(key).update({"members": newMembersList});
+      });
+    });
   }
+//http://stackoverflow.com/questions/41427859/get-array-of-items-from-firebase-snapshot
 }
