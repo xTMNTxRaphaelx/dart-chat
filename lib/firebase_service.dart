@@ -123,13 +123,10 @@ class FirebaseService {
         var snapshot= e.snapshot.val();
         var key= data.key;
         print(snapshot[key]);
-        var membersList= snapshot[key]['members'];
-        print(membersList);
-        var newMembersList = membersList.add(memberName);
-        print(newMembersList);
-        _fbRefRooms.child(key).update({"members": newMembersList});
+        List membersList= snapshot[key]['members'];
+        membersList.add(memberName);
+        _fbRefRooms.child(key).update({"members": membersList});
       });
     });
   }
-//http://stackoverflow.com/questions/41427859/get-array-of-items-from-firebase-snapshot
 }
