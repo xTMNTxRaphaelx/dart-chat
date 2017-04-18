@@ -7,11 +7,13 @@ import 'package:angular2_components/angular2_components.dart';
 import './app_header/app_header.dart';
 import 'firebase_service.dart';
 
+import 'scroll_down.dart';
+
 @Component(
   selector: 'my-app',
   styleUrls: const ['app_component.css'],
   templateUrl: 'app_component.html',
-  directives: const [AppHeader],
+  directives: const [AppHeader, VuScrollDown],
   providers: const [materialProviders, FirebaseService],
 )
 class AppComponent {
@@ -22,17 +24,17 @@ class AppComponent {
   List chatRoomMessage = [];
   var activeRoom= "";
   List activeMembers = [];
-
   List myGroups = [];
   List invitedGroups = [];
 
+  var isRoomActive = false;
 
   AppComponent(FirebaseService this.fbService) {}
 
 
   void addGroup() {
     String name = groupName.trim();
-
+    print(name);
     if(name.isNotEmpty) {
       fbService.addGroup(name);
       groupName = "";
@@ -42,8 +44,7 @@ class AppComponent {
   void loadMessages(room) {
     activeRoom= room.name;
     activeMembers= room.members;
-    print(room.key);
-    print(activeMembers);
+    isRoomActive= true;
     fbService.updateRoomMessages(activeRoom);
   }
 
@@ -57,6 +58,22 @@ class AppComponent {
   void addMember() {
     if(newMember.isNotEmpty) {
       fbService.addMember(newMember, activeRoom);
+    }
+  }
+
+  isYou(email) {
+    if(fbService.user.displayName != email) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  isMe(email) {
+    if(fbService.user.displayName == email) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

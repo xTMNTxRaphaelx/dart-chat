@@ -3,46 +3,55 @@
 <div id="chat-wrapper" [hidden]="fbService.user == null">
     <div class="chat-window">
         <div id="groups">
-            <input type="text" [(ngModel)]="groupName" placeholder="Enter group name">
-            <button (click)="addGroup()">+</button>
+            <input class="addGroupbox" type="text" [(ngModel)]="groupName" placeholder="Enter group name" (keyup.enter)="addGroup()">
+            <button class="addBtn" (click)="addGroup()">Add</button>
 
             <h4>
                 My Groups
             </h4>
-            <div *ngFor="let group of fbService.myGroups">
-                <a (click)="loadMessages(group)">{{group.key}}</a>
+            <div class="group" *ngFor="let group of fbService.myGroups">
+                <a (click)="loadMessages(group)" [class.selected]="activeRoom == group.name">{{group.name}}</a>
             </div>
             <h4>
                 Invited Groups
             </h4>
             <div *ngFor="let group of fbService.invitedGroups">
-                <a (click)="loadMessages(group)">{{group.name}}</a>
+                <a (click)="loadMessages(group)" [class.selected]="activeRoom == group.name">{{group.name}}</a>
             </div>
         </div>
-        <div id="chat">
-            <div class="messages">
-                <div *ngFor="let msg of fbService.roomMessages">
-                    <div class="name">{{msg.name}}</div>
-                    <div *ngIf="msg.imageURL == null">{{msg.text}}</div>
-                    <div *ngIf="msg.imageURL != null">
-                        <a [href]="msg.imageURL" target="_blank">
-                            <img [src]="msg.imageURL" class="message-image">
-                        </a>
+        <div id="chat" *ngIf="isRoomActive">
+            <div class="title">{{activeRoom}} Chat</div>
+            <div class="messages" vuScrollDown>
+                <div *ngFor="let msg of fbService.roomMessages" class="bubble" [class.me]="isMe(msg.name)" [class.you]="isYou(msg.name)">
+                    <div class="author">
+                        <img src="{{fbService.user?.photoURL}}" />
+                        {{msg.name}}
                     </div>
+                    <p class="desc">
+                        {{msg.text}}
+                        <!--<div *ngIf="msg.imageURL == null">{{msg.text}}</div>-->
+                        <!--<div *ngIf="msg.imageURL != null">-->
+                            <!--<a [href]="msg.imageURL" target="_blank">-->
+                                <!--<img [src]="msg.imageURL" class="message-image">-->
+                            <!--</a>-->
+                        <!--</div>-->
+                    </p>
                 </div>
             </div>
             <input type="text" [(ngModel)]="chatMessage" placeholder="enter to start chatting" (keyup.enter)="sendMessage()">
-            <button (click)="sendMessage()">Send</button>
+            <button class="sendBtn" (click)="sendMessage()">Send</button>
         </div>
-        <div id="members">
+        <div id="members" *ngIf="isRoomActive">
             <input type="text" [(ngModel)]="newMember" placeholder="Enter member name">
-            <button (click)="addMember()">+</button>
+            <button class="addMemberBtn" (click)="addMember()">+</button>
             <div *ngIf="activeMembers?.length > 0">
-
-                <div *ngFor="let member of activeMembers">
+                <div class="member" *ngFor="let member of activeMembers">
                     {{member}}
                 </div>
             </div>
+        </div>
+        <div id="error_msg" *ngIf="!isRoomActive">
+            Please select a room to start chatting.
         </div>
     </div>
 </div>

@@ -42,7 +42,6 @@ class FirebaseService {
       invitedGroups= [];
       _fbRefRooms.onChildAdded.listen((e) {
         Group group = new Group.fromMap(e.snapshot.val());
-        group.key = e.snapshot.key;
         if(group.members.indexOf(user.displayName) != -1) {
           if(group.leader == user.displayName) {
             myGroups.add(group);
@@ -118,7 +117,7 @@ class FirebaseService {
     }
   }
 
-  void addMember(String memberName, String roomName) async {
+  Future addMember(String memberName, String roomName) async {
 //    _fbRefRooms.child()
   }
 }
