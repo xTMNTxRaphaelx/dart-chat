@@ -42,7 +42,7 @@
             <button class="sendBtn" (click)="sendMessage()">Send</button>
         </div>
         <div id="members" *ngIf="isRoomActive">
-            <input type="text" [(ngModel)]="newMember" placeholder="Enter member name">
+            <input type="text" [(ngModel)]="newMember" (keyup.enter)="addMember()" placeholder="Enter member name">
             <button class="addMemberBtn" (click)="addMember()">ADD</button>
             <div *ngIf= "activeMembers?.length > 0">
                 <div class="member" *ngFor="let member of activeMembers">

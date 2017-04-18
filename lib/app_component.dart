@@ -58,6 +58,7 @@ class AppComponent {
   void addMember() {
     if(newMember.isNotEmpty) {
       fbService.addMember(newMember, activeRoom);
+      activeMembers.add(newMember);
     }
   }
 

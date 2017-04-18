@@ -40,7 +40,8 @@ class FirebaseService {
     void listGroups() {
       myGroups = [];
       invitedGroups= [];
-      _fbRefRooms.onChildAdded.listen((e) {
+
+      void onAddEvent(e) {
         Group group = new Group.fromMap(e.snapshot.val());
         if(group.members.indexOf(user.displayName) != -1) {
           if(group.leader == user.displayName) {
@@ -49,8 +50,30 @@ class FirebaseService {
             invitedGroups.add(group);
           }
         }
+      }
 
-      });
+      void onUpdateEvent(e) {
+        Group updatedGroup = new Group.fromMap(e.snapshot.val());
+        var wasMyGroup= false;
+        myGroups.forEach((group) {
+          if(group.name == updatedGroup.name) {
+            wasMyGroup= true;
+          }
+        });
+        var wasInvitedGroup= false;
+        invitedGroups.forEach((group) {
+          if(group.name == updatedGroup.name) {
+            wasInvitedGroup= true;
+            group.members.add(updatedGroup.members[updatedGroup.members.length-1]);
+          }
+        });
+        if(!wasInvitedGroup && !wasMyGroup) {
+          invitedGroups.add(updatedGroup);
+        }
+      }
+      _fbRefRooms.onChildAdded.listen(onAddEvent);
+
+      _fbRefRooms.onChildChanged.listen(onUpdateEvent);
     }
 
     void loadMessages() {
