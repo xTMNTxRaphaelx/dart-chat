@@ -59,7 +59,7 @@ class AppComponent {
   void sendMessage() {
     String chatMsg = chatMessage.trim();
     if (chatMsg.isNotEmpty) {
-      fbService.sendMessage(text: chatMsg, groupName: activeGroup);
+      fbService.sendMessage(text: chatMsg, groupName: activeGroup, imageURL: null);
       chatMessage = "";
     }
   }

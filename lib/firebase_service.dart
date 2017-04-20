@@ -159,7 +159,7 @@ class FirebaseService {
   Future sendMessage({String text, String groupName, String imageURL}) async {
     try {
       Message msg = new Message(
-          user.displayName, groupName, text, user.photoURL, imageURL);
+          user.displayName, groupName, text, imageURL, user.photoURL);
       await _fbRefMessages.push(msg.toMap());
     } catch (err) {
       print("$runtimeType:: sendMessage() -- $err");
@@ -238,7 +238,7 @@ class FirebaseService {
 
       if (snapshot.state == fb.TaskState.SUCCESS) {
         sendMessage(
-            text: '',
+          text: null,
             imageURL: snapshot.downloadURL.toString(),
             groupName: roomName);
       }
