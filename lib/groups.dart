@@ -5,12 +5,7 @@ class Group {
 
   Group(this.name, [this.leader, this.members]) {}
 
-  Group.fromMap(Map map) :
-    this(map['name'], map['leader'], map['members']);
+  Group.fromMap(Map map) : this(map['name'], map['leader'], map['members']);
 
-  Map toMap() => {
-    "name": name,
-    "leader": leader,
-    "members": members
-  };
+  Map toMap() => {"name": name, "leader": leader, "members": members};
 }

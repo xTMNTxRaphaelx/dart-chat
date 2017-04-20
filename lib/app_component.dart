@@ -19,63 +19,72 @@ import 'scroll_down.dart';
 )
 class AppComponent {
   final FirebaseService fbService;
-  String groupName = "";
+
+  bool isGroupActive;
+
+//  Logged User
+  String newGroupName = "";
+  String activeGroup = "";
   String chatMessage = "";
-  String newMember = "";
-  List chatRoomMessage = [];
-  var activeRoom= "";
-  List activeMembers = [];
-  List myGroups = [];
-  List invitedGroups = [];
-
-  var isRoomActive = false;
-
-  AppComponent(FirebaseService this.fbService) {}
+  String userToInvite = "";
 
 
+  AppComponent(FirebaseService this.fbService) {
+    this.isGroupActive = false;
+  }
+
+  /**
+   * Function is called when user is trying to add new group.
+   */
   void addGroup() {
-    String name = groupName.trim();
-//    print(name);
-    if(name.isNotEmpty) {
-      fbService.addGroup(name);
-      groupName = "";
+    String groupName = newGroupName.trim();
+    if (groupName.isNotEmpty) {
+      fbService.addGroup(groupName);
+      newGroupName = "";
     }
   }
 
-  void loadMessages(room) {
-    activeRoom= room.name;
-    activeMembers= room.members;
-    isRoomActive= true;
-    fbService.updateRoomMessages(activeRoom);
+  /**
+   * Function triggered when user selectes a group.
+   */
+  void selectGroup(group) {
+    isGroupActive = true;
+    activeGroup = group.name;
+    fbService.selectGroup(activeGroup);
   }
 
+  /**
+   * Function triggered when user sends a message.
+   */
   void sendMessage() {
-    if(chatMessage.isNotEmpty) {
-      fbService.sendMessage(text: chatMessage, roomName: activeRoom);
+    String chatMsg = chatMessage.trim();
+    if (chatMsg.isNotEmpty) {
+      fbService.sendMessage(text: chatMsg, groupName: activeGroup);
       chatMessage = "";
     }
   }
 
+
+  /**
+   * Fcuntion triggered to add a new member to active group
+   */
   void addMember() {
-    if(newMember.isNotEmpty) {
-      fbService.addMember(newMember, activeRoom);
-      activeMembers.add(newMember);
+    String newMemb = userToInvite.trim();
+    if (newMemb.isNotEmpty) {
+      fbService.addMember(newMemb, activeGroup);
+      userToInvite = "";
     }
   }
 
+  /**
+   * Function triggered to remove a member from active group.
+   */
   void removeMember(memberName) {
-    fbService.removeMember(memberName, activeRoom);
-    List tempList= [];
-    activeMembers.asMap().forEach((i, value) {
-      if(value != memberName) {
-        tempList.add(value);
-      }
-    });
-    activeMembers = tempList;
+    fbService.removeMember(memberName, activeGroup);
   }
 
   isYou(email) {
-    if(fbService.user.displayName != email) {
+    if (fbService.user.displayName != email) {
       return true;
     } else {
       return false;
@@ -83,7 +92,7 @@ class AppComponent {
   }
 
   isMe(email) {
-    if(fbService.user.displayName == email) {
+    if (fbService.user.displayName == email) {
       return true;
     } else {
       return false;
@@ -91,8 +100,8 @@ class AppComponent {
   }
 
   void sendImageMessage(FileList files) {
-    if(files.isNotEmpty) {
-      fbService.sendImage(files.first, activeRoom);
+    if (files.isNotEmpty) {
+      fbService.sendImage(files.first, activeGroup);
     }
   }
 }
